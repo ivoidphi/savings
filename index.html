@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Savings Goals</title>
+
+<style>
+
+body{
+font-family:-apple-system,BlinkMacSystemFont;
+background:#0b0b10;
+color:white;
+margin:0;
+text-align:center;
+}
+
+.container{
+max-width:520px;
+margin:auto;
+padding:20px;
+}
+
+h1{
+margin-bottom:10px;
+}
+
+.card{
+background:#171722;
+border-radius:18px;
+padding:18px;
+margin-bottom:15px;
+}
+
+input{
+width:90%;
+padding:12px;
+margin:6px;
+border-radius:10px;
+border:none;
+background:#222232;
+color:white;
+}
+
+button{
+padding:12px 18px;
+border:none;
+border-radius:10px;
+margin:5px;
+font-size:15px;
+}
+
+.add{
+background:#7c7cff;
+color:white;
+}
+
+.deposit{
+background:#4ade80;
+}
+
+.withdraw{
+background:#f87171;
+}
+
+.goal{
+background:#1d1d2a;
+padding:15px;
+border-radius:14px;
+margin-top:10px;
+text-align:left;
+}
+
+.progressbar{
+width:100%;
+height:14px;
+background:#2b2b3c;
+border-radius:10px;
+margin-top:8px;
+}
+
+.progress{
+height:14px;
+background:#7c7cff;
+border-radius:10px;
+}
+
+.goal-title{
+font-size:16px;
+font-weight:600;
+}
+
+.small{
+font-size:13px;
+opacity:0.8;
+}
+
+.transactions{
+margin-top:6px;
+font-size:13px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>💰 My Savings</h1>
+
+<div class="card">
+
+<input id="goalName" placeholder="Goal name (Bike, Laptop, etc)">
+<input id="goalAmount" placeholder="Goal amount">
+
+<button class="add" onclick="addGoal()">Add Goal</button>
+
+</div>
+
+<div id="goals"></div>
+
+</div>
+
+<script>
+
+let goals = JSON.parse(localStorage.goals || "[]")
+
+function save(){
+localStorage.goals = JSON.stringify(goals)
+}
+
+function addGoal(){
+
+let name = document.getElementById("goalName").value
+let amount = Number(document.getElementById("goalAmount").value)
+
+if(!name || !amount) return
+
+goals.push({
+name:name,
+target:amount,
+balance:0,
+history:[]
+})
+
+save()
+render()
+
+}
+
+function deposit(i){
+
+let amt = Number(prompt("Deposit amount"))
+let reason = prompt("Reason")
+
+if(!amt) return
+
+goals[i].balance += amt
+goals[i].history.unshift("Deposit ₱"+amt+" - "+reason)
+
+save()
+render()
+
+}
+
+function withdraw(i){
+
+let amt = Number(prompt("Withdraw amount"))
+let reason = prompt("Reason")
+
+if(!amt) return
+
+goals[i].balance -= amt
+goals[i].history.unshift("Withdraw ₱"+amt+" - "+reason)
+
+save()
+render()
+
+}
+
+function render(){
+
+let container = document.getElementById("goals")
+container.innerHTML=""
+
+goals.forEach((g,i)=>{
+
+let percent = (g.balance/g.target)*100
+if(percent<0) percent=0
+
+let remaining = g.target-g.balance
+let daily = remaining/30
+
+let div=document.createElement("div")
+div.className="goal"
+
+div.innerHTML=`
+
+<div class="goal-title">${g.name}</div>
+
+<div class="small">₱${g.balance} / ₱${g.target} (${percent.toFixed(1)}%)</div>
+
+<div class="progressbar">
+<div class="progress" style="width:${percent}%"></div>
+</div>
+
+<div class="small">Save ₱${daily.toFixed(2)} per day</div>
+
+<button class="deposit" onclick="deposit(${i})">Deposit</button>
+<button class="withdraw" onclick="withdraw(${i})">Withdraw</button>
+
+<div class="transactions">
+${g.history.slice(0,5).map(t=>"<div>"+t+"</div>").join("")}
+</div>
+
+`
+
+container.appendChild(div)
+
+})
+
+}
+
+render()
+
+</script>
+
+</body>
+</html>
