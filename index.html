@@ -2,101 +2,144 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Savings Goals</title>
+<title>My Savings</title>
 
 <style>
 
 body{
-font-family:-apple-system,BlinkMacSystemFont;
-background:#0b0b10;
-color:white;
 margin:0;
-text-align:center;
+font-family:-apple-system,BlinkMacSystemFont;
+background:#0f1115;
+color:white;
 }
 
 .container{
-max-width:520px;
-margin:auto;
 padding:20px;
+max-width:500px;
+margin:auto;
 }
 
-h1{
-margin-bottom:10px;
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
 }
 
-.card{
-background:#171722;
-border-radius:18px;
+.title{
+font-size:28px;
+font-weight:700;
+}
+
+.premium{
+background:linear-gradient(90deg,#ff7a18,#32d2aa);
+padding:8px 16px;
+border-radius:20px;
+font-size:14px;
+}
+
+.goal-card{
+background:#181c23;
 padding:18px;
-margin-bottom:15px;
+border-radius:18px;
+margin-top:10px;
 }
 
-input{
-width:90%;
+.goal-top{
+display:flex;
+align-items:center;
+gap:15px;
+}
+
+.icon{
+font-size:28px;
+background:#222733;
 padding:12px;
-margin:6px;
+border-radius:12px;
+}
+
+.goal-title{
+font-size:18px;
+font-weight:600;
+}
+
+.goal-amount{
+color:#37d399;
+}
+
+.progress-bar{
+height:8px;
+background:#2a2f38;
 border-radius:10px;
-border:none;
-background:#222232;
-color:white;
+margin-top:15px;
+overflow:hidden;
+}
+
+.progress{
+height:8px;
+background:#37d399;
+}
+
+.percent{
+background:#1d2b24;
+color:#37d399;
+padding:4px 8px;
+border-radius:8px;
+font-size:13px;
+margin-left:10px;
+}
+
+.progress-row{
+display:flex;
+align-items:center;
 }
 
 button{
-padding:12px 18px;
+margin-top:10px;
+padding:8px 12px;
 border:none;
-border-radius:10px;
-margin:5px;
-font-size:15px;
-}
-
-.add{
-background:#7c7cff;
-color:white;
+border-radius:8px;
+font-size:14px;
 }
 
 .deposit{
-background:#4ade80;
+background:#37d399;
 }
 
 .withdraw{
 background:#f87171;
+margin-left:8px;
 }
 
-.goal{
-background:#1d1d2a;
-padding:15px;
-border-radius:14px;
-margin-top:10px;
-text-align:left;
+.add-goal{
+position:fixed;
+bottom:90px;
+right:25px;
+background:#0b0f18;
+color:white;
+padding:16px 22px;
+border-radius:30px;
+font-size:18px;
 }
 
-.progressbar{
+.nav{
+position:fixed;
+bottom:0;
 width:100%;
-height:14px;
-background:#2b2b3c;
-border-radius:10px;
-margin-top:8px;
+background:#141820;
+display:flex;
+justify-content:space-around;
+padding:12px 0;
 }
 
-.progress{
-height:14px;
-background:#7c7cff;
-border-radius:10px;
-}
-
-.goal-title{
-font-size:16px;
-font-weight:600;
-}
-
-.small{
+.nav-item{
+text-align:center;
+color:#9aa0aa;
 font-size:13px;
-opacity:0.8;
 }
 
-.transactions{
-margin-top:6px;
-font-size:13px;
+.nav-item.active{
+color:white;
 }
 
 </style>
@@ -106,19 +149,23 @@ font-size:13px;
 
 <div class="container">
 
-<h1>💰 My Savings</h1>
-
-<div class="card">
-
-<input id="goalName" placeholder="Goal name (Bike, Laptop, etc)">
-<input id="goalAmount" placeholder="Goal amount">
-
-<button class="add" onclick="addGoal()">Add Goal</button>
-
+<div class="header">
+<div class="title">My Savings</div>
+<div class="premium">✨ Mani Premium</div>
 </div>
 
 <div id="goals"></div>
 
+</div>
+
+<div class="add-goal" onclick="addGoal()">
+Add Goal +
+</div>
+
+<div class="nav">
+<div class="nav-item active">🐷<br>Savings</div>
+<div class="nav-item">📈<br>Progress</div>
+<div class="nav-item">⚙️<br>Settings</div>
 </div>
 
 <script>
@@ -131,16 +178,15 @@ localStorage.goals = JSON.stringify(goals)
 
 function addGoal(){
 
-let name = document.getElementById("goalName").value
-let amount = Number(document.getElementById("goalAmount").value)
+let name = prompt("Goal name")
+let target = Number(prompt("Goal amount"))
 
-if(!name || !amount) return
+if(!name || !target) return
 
 goals.push({
 name:name,
-target:amount,
-balance:0,
-history:[]
+target:target,
+balance:0
 })
 
 save()
@@ -150,13 +196,11 @@ render()
 
 function deposit(i){
 
-let amt = Number(prompt("Deposit amount"))
-let reason = prompt("Reason")
+let amount = Number(prompt("Deposit amount"))
 
-if(!amt) return
+if(!amount) return
 
-goals[i].balance += amt
-goals[i].history.unshift("Deposit ₱"+amt+" - "+reason)
+goals[i].balance += amount
 
 save()
 render()
@@ -165,13 +209,11 @@ render()
 
 function withdraw(i){
 
-let amt = Number(prompt("Withdraw amount"))
-let reason = prompt("Reason")
+let amount = Number(prompt("Withdraw amount"))
 
-if(!amt) return
+if(!amount) return
 
-goals[i].balance -= amt
-goals[i].history.unshift("Withdraw ₱"+amt+" - "+reason)
+goals[i].balance -= amount
 
 save()
 render()
@@ -181,41 +223,45 @@ render()
 function render(){
 
 let container = document.getElementById("goals")
+
 container.innerHTML=""
 
 goals.forEach((g,i)=>{
 
 let percent = (g.balance/g.target)*100
-if(percent<0) percent=0
 
-let remaining = g.target-g.balance
-let daily = remaining/30
+let card = document.createElement("div")
 
-let div=document.createElement("div")
-div.className="goal"
+card.className="goal-card"
 
-div.innerHTML=`
+card.innerHTML = `
 
-<div class="goal-title">${g.name}</div>
+<div class="goal-top">
+<div class="icon">🎯</div>
 
-<div class="small">₱${g.balance} / ₱${g.target} (${percent.toFixed(1)}%)</div>
-
-<div class="progressbar">
-<div class="progress" style="width:${percent}%"></div>
+<div>
+<div class="goal-title"></div>
+<div class="goal-amount">₱ / ₱</div>
 </div>
 
-<div class="small">Save ₱${daily.toFixed(2)} per day</div>
-
-<button class="deposit" onclick="deposit(${i})">Deposit</button>
-<button class="withdraw" onclick="withdraw(${i})">Withdraw</button>
-
-<div class="transactions">
-${g.history.slice(0,5).map(t=>"<div>"+t+"</div>").join("")}
 </div>
+
+<div class="progress-row">
+
+<div class="progress-bar" style="flex:1">
+<div class="progress" style="width:%"></div>
+</div>
+
+<div class="percent">%</div>
+
+</div>
+
+<button class="deposit" onclick="deposit()">Deposit</button>
+<button class="withdraw" onclick="withdraw()">Withdraw</button>
 
 `
 
-container.appendChild(div)
+container.appendChild(card)
 
 })
 
