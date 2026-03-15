@@ -7,1294 +7,217 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="theme-color" content="#000000">
   <title>Sibings</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    :root {
-      --bg-primary: #000000;
-      --bg-card: #1c1c1e;
-      --bg-secondary: #2c2c2e;
-      --text-primary: #ffffff;
-      --text-secondary: #8e8e93;
-      --accent: #34c759;
-      --accent-light: #30d158;
-      --destructive: #ff3b30;
-      --border: #38383a;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      min-height: 100vh;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
-
-    /* Loading Screen */
-    .loading-screen {
-      position: fixed;
-      inset: 0;
-      background: var(--bg-primary);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      transition: opacity 0.4s ease, visibility 0.4s ease;
-    }
-
-    .loading-screen.hidden {
-      opacity: 0;
-      visibility: hidden;
-    }
-
-    .loading-icon {
-      width: 80px;
-      height: 80px;
-      background: var(--accent);
-      border-radius: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 40px;
-      margin-bottom: 20px;
-      animation: pulse 1.5s ease-in-out infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(0.95); opacity: 0.8; }
-    }
-
-    .loading-title {
-      font-size: 28px;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .loading-subtitle {
-      font-size: 14px;
-      color: var(--text-secondary);
-      margin-top: 8px;
-    }
-
-    /* Main Container */
-    .app-container {
-      padding: env(safe-area-inset-top, 44px) 16px calc(env(safe-area-inset-bottom, 34px) + 90px);
-      max-width: 500px;
-      margin: 0 auto;
-      min-height: 100vh;
-    }
-
-    /* Page Header */
-    .page-header {
-      margin-bottom: 20px;
-    }
-
-    .page-title {
-      font-size: 28px;
-      font-weight: 700;
-    }
-
-    .page-subtitle {
-      font-size: 14px;
-      color: var(--text-secondary);
-      margin-top: 4px;
-    }
-
-    /* Tab Content */
-    .tab-content {
-      display: none;
-      animation: fadeIn 0.3s ease;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* Stats Grid */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
-
-    .stat-card {
-      background: var(--bg-card);
-      border-radius: 16px;
-      padding: 16px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    }
-
-    .stat-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .stat-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-    }
-
-    .stat-icon.green {
-      background: rgba(52, 199, 89, 0.2);
-    }
-
-    .stat-icon.gray {
-      background: var(--bg-secondary);
-    }
-
-    .stat-label {
-      font-size: 12px;
-      color: var(--text-secondary);
-    }
-
-    .stat-value {
-      font-size: 24px;
-      font-weight: 700;
-    }
-
-    /* Progress Card */
-    .progress-card {
-      background: linear-gradient(135deg, rgba(52, 199, 89, 0.2) 0%, rgba(48, 209, 88, 0.05) 100%);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-    }
-
-    .progress-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .progress-title {
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .progress-percent {
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--accent);
-    }
-
-    .progress-bar {
-      height: 10px;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 5px;
-      overflow: hidden;
-    }
-
-    .progress-fill {
-      height: 100%;
-      background: var(--accent);
-      border-radius: 5px;
-      transition: width 0.8s ease-out;
-    }
-
-    .progress-subtitle {
-      font-size: 12px;
-      color: var(--text-secondary);
-      margin-top: 12px;
-    }
-
-    /* Section Title */
-    .section-title {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 12px;
-    }
-
-    /* Goal Card */
-    .goal-card {
-      background: var(--bg-card);
-      border-radius: 16px;
-      padding: 16px;
-      margin-bottom: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-      transition: transform 0.1s ease, opacity 0.1s ease;
-    }
-
-    .goal-card:active {
-      transform: scale(0.98);
-      opacity: 0.9;
-    }
-
-    .goal-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .goal-icon {
-      width: 56px;
-      height: 56px;
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      flex-shrink: 0;
-    }
-
-    .goal-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .goal-name {
-      font-size: 16px;
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .goal-amount {
-      font-size: 14px;
-      color: var(--text-secondary);
-      margin-top: 2px;
-    }
-
-    .goal-amount .current {
-      color: var(--accent);
-      font-weight: 500;
-    }
-
-    .goal-badge {
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      flex-shrink: 0;
-    }
-
-    .goal-progress {
-      margin-top: 16px;
-    }
-
-    .goal-progress-bar {
-      height: 8px;
-      background: var(--bg-secondary);
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    .goal-progress-fill {
-      height: 100%;
-      border-radius: 4px;
-      transition: width 0.8s ease-out;
-    }
-
-    .goal-actions {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .btn {
-      padding: 10px 16px;
-      border: none;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-family: inherit;
-    }
-
-    .btn:active {
-      transform: scale(0.96);
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: var(--bg-primary);
-    }
-
-    .btn-secondary {
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-    }
-
-    .btn-ghost {
-      background: transparent;
-      color: var(--text-secondary);
-      padding: 10px;
-    }
-
-    .btn-full {
-      flex: 1;
-    }
-
-    /* Action Form */
-    .action-form {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
-    }
-
-    .input-group {
-      margin-bottom: 12px;
-    }
-
-    .input {
-      width: 100%;
-      padding: 14px 16px;
-      background: var(--bg-secondary);
-      border: none;
-      border-radius: 12px;
-      color: var(--text-primary);
-      font-size: 16px;
-      font-family: inherit;
-      outline: none;
-    }
-
-    .input::placeholder {
-      color: var(--text-secondary);
-    }
-
-    .input-row {
-      display: flex;
-      gap: 8px;
-    }
-
-    /* Empty State */
-    .empty-state {
-      text-align: center;
-      padding: 48px 20px;
-      color: var(--text-secondary);
-    }
-
-    .empty-icon {
-      font-size: 48px;
-      margin-bottom: 16px;
-    }
-
-    .empty-title {
-      font-size: 16px;
-      margin-bottom: 4px;
-    }
-
-    .empty-subtitle {
-      font-size: 14px;
-    }
-
-    /* FAB */
-    .fab {
-      position: fixed;
-      bottom: calc(env(safe-area-inset-bottom, 34px) + 90px);
-      right: 20px;
-      width: 56px;
-      height: 56px;
-      background: var(--accent);
-      border: none;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-      color: var(--bg-primary);
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(52, 199, 89, 0.4);
-      transition: all 0.2s ease;
-      z-index: 100;
-    }
-
-    .fab:active {
-      transform: scale(0.92);
-    }
-
-    /* Bottom Navigation */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(28, 28, 30, 0.85);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-top: 1px solid var(--border);
-      padding-bottom: env(safe-area-inset-bottom, 34px);
-      z-index: 100;
-    }
-
-    .nav-items {
-      display: flex;
-      justify-content: space-around;
-      padding: 8px 0;
-    }
-
-    .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      padding: 8px 24px;
-      background: none;
-      border: none;
-      color: var(--text-secondary);
-      cursor: pointer;
-      transition: all 0.2s ease;
-      border-radius: 12px;
-    }
-
-    .nav-item.active {
-      color: var(--accent);
-    }
-
-    .nav-item:active {
-      opacity: 0.7;
-    }
-
-    .nav-icon {
-      width: 24px;
-      height: 24px;
-      transition: transform 0.2s ease;
-    }
-
-    .nav-item.active .nav-icon {
-      transform: scale(1.1);
-    }
-
-    .nav-label {
-      font-size: 11px;
-      font-weight: 500;
-    }
-
-    /* Modal */
-    .modal-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.7);
-      display: flex;
-      align-items: flex-end;
-      justify-content: center;
-      z-index: 200;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s ease;
-    }
-
-    .modal-overlay.active {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .modal-content {
-      background: var(--bg-card);
-      width: 100%;
-      max-width: 500px;
-      border-radius: 24px 24px 0 0;
-      padding: 24px;
-      transform: translateY(100%);
-      transition: transform 0.3s ease;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-
-    .modal-overlay.active .modal-content {
-      transform: translateY(0);
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .modal-title {
-      font-size: 20px;
-      font-weight: 700;
-    }
-
-    .modal-close {
-      background: none;
-      border: none;
-      color: var(--text-secondary);
-      font-size: 24px;
-      cursor: pointer;
-      padding: 4px;
-    }
-
-    /* Form Elements */
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    .form-label {
-      display: block;
-      font-size: 13px;
-      color: var(--text-secondary);
-      margin-bottom: 8px;
-    }
-
-    .icon-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-    }
-
-    .icon-option {
-      aspect-ratio: 1;
-      background: var(--bg-secondary);
-      border: none;
-      border-radius: 12px;
-      font-size: 24px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .icon-option.selected {
-      background: var(--accent);
-    }
-
-    .color-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .color-option {
-      width: 44px;
-      height: 44px;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .color-option.selected {
-      box-shadow: 0 0 0 2px white;
-    }
-
-    .btn-submit {
-      width: 100%;
-      padding: 16px;
-      background: var(--accent);
-      color: var(--bg-primary);
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 8px;
-      transition: all 0.2s ease;
-    }
-
-    .btn-submit:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    .btn-submit:active:not(:disabled) {
-      transform: scale(0.98);
-    }
-
-    /* Progress Page Stats */
-    .big-stat-card {
-      background: linear-gradient(135deg, rgba(52, 199, 89, 0.2) 0%, rgba(48, 209, 88, 0.05) 100%);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .big-stat-value {
-      font-size: 32px;
-      font-weight: 700;
-    }
-
-    .big-stat-icon {
-      width: 56px;
-      height: 56px;
-      background: rgba(52, 199, 89, 0.2);
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 28px;
-    }
-
-    .stat-row {
-      display: flex;
-      gap: 16px;
-      font-size: 14px;
-      margin-top: 12px;
-    }
-
-    .stat-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .stat-item.positive {
-      color: var(--accent);
-    }
-
-    .stat-item.negative {
-      color: var(--destructive);
-    }
-
-    /* Status Grid */
-    .status-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-
-    .status-card {
-      background: var(--bg-card);
-      border-radius: 16px;
-      padding: 16px 8px;
-      text-align: center;
-    }
-
-    .status-icon {
-      width: 40px;
-      height: 40px;
-      background: var(--bg-secondary);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 20px;
-      margin: 0 auto 8px;
-    }
-
-    .status-icon.green {
-      background: rgba(52, 199, 89, 0.2);
-    }
-
-    .status-value {
-      font-size: 24px;
-      font-weight: 700;
-    }
-
-    .status-label {
-      font-size: 11px;
-      color: var(--text-secondary);
-      margin-top: 2px;
-    }
-
-    /* Transaction List */
-    .transaction-list {
-      background: var(--bg-card);
-      border-radius: 16px;
-      padding: 16px;
-    }
-
-    .transaction-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .transaction-item:last-child {
-      border-bottom: none;
-    }
-
-    .transaction-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .transaction-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-    }
-
-    .transaction-icon.deposit {
-      background: rgba(52, 199, 89, 0.2);
-    }
-
-    .transaction-icon.withdraw {
-      background: rgba(255, 59, 48, 0.2);
-    }
-
-    .transaction-info {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .transaction-type {
-      font-size: 14px;
-      font-weight: 500;
-      text-transform: capitalize;
-    }
-
-    .transaction-goal {
-      font-size: 12px;
-      color: var(--text-secondary);
-    }
-
-    .transaction-right {
-      text-align: right;
-    }
-
-    .transaction-amount {
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .transaction-amount.deposit {
-      color: var(--accent);
-    }
-
-    .transaction-amount.withdraw {
-      color: var(--destructive);
-    }
-
-    .transaction-date {
-      font-size: 11px;
-      color: var(--text-secondary);
-    }
-
-    /* Settings Styles */
-    .settings-card {
-      background: var(--bg-card);
-      border-radius: 16px;
-      overflow: hidden;
-      margin-bottom: 16px;
-    }
-
-    .settings-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 16px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .settings-item:last-child {
-      border-bottom: none;
-    }
-
-    .settings-item-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .settings-icon {
-      width: 36px;
-      height: 36px;
-      background: rgba(52, 199, 89, 0.2);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-    }
-
-    .settings-label {
-      font-size: 15px;
-      font-weight: 500;
-    }
-
-    .settings-value {
-      font-size: 13px;
-      color: var(--text-secondary);
-    }
-
-    /* Toggle Switch */
-    .toggle {
-      width: 50px;
-      height: 30px;
-      background: var(--bg-secondary);
-      border-radius: 15px;
-      position: relative;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    .toggle.active {
-      background: var(--accent);
-    }
-
-    .toggle-knob {
-      width: 26px;
-      height: 26px;
-      background: white;
-      border-radius: 50%;
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      transition: transform 0.3s ease;
-    }
-
-    .toggle.active .toggle-knob {
-      transform: translateX(20px);
-    }
-
-    /* App Info Card */
-    .app-info-card {
-      background: linear-gradient(135deg, rgba(52, 199, 89, 0.2) 0%, rgba(48, 209, 88, 0.05) 100%);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
-
-    .app-info-header {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-
-    .app-logo {
-      width: 64px;
-      height: 64px;
-      background: var(--accent);
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 32px;
-    }
-
-    .app-name {
-      font-size: 22px;
-      font-weight: 700;
-    }
-
-    .app-version {
-      font-size: 13px;
-      color: var(--text-secondary);
-    }
-
-    .app-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      padding-top: 16px;
-      border-top: 1px solid var(--border);
-    }
-
-    .app-stat {
-      text-align: center;
-    }
-
-    .app-stat-value {
-      font-size: 20px;
-      font-weight: 700;
-    }
-
-    .app-stat-label {
-      font-size: 11px;
-      color: var(--text-secondary);
-      margin-top: 2px;
-    }
-
-    /* Section Header */
-    .section-header {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 12px;
-      padding-left: 4px;
-    }
-
-    /* Footer */
-    .footer {
-      text-align: center;
-      padding: 24px;
-      color: var(--text-secondary);
-      font-size: 12px;
-    }
-
-    /* Goal Breakdown */
-    .breakdown-item {
-      margin-bottom: 16px;
-    }
-
-    .breakdown-item:last-child {
-      margin-bottom: 0;
-    }
-
-    .breakdown-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-
-    .breakdown-left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .breakdown-icon {
-      font-size: 18px;
-    }
-
-    .breakdown-name {
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .breakdown-amount {
-      font-size: 13px;
-      color: var(--text-secondary);
-    }
-
-    .breakdown-progress {
-      height: 6px;
-      background: var(--bg-secondary);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-
-    .breakdown-fill {
-      height: 100%;
-      border-radius: 3px;
-      transition: width 0.8s ease-out;
-    }
-
-    .breakdown-footer {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 4px;
-      font-size: 11px;
-      color: var(--text-secondary);
-    }
-
-    /* Confirm Dialog */
-    .confirm-dialog {
-      text-align: center;
-      padding: 8px 0;
-    }
-
-    .confirm-text {
-      font-size: 14px;
-      color: var(--text-secondary);
-      margin-bottom: 20px;
-      line-height: 1.5;
-    }
-
-    .confirm-buttons {
-      display: flex;
-      gap: 12px;
-    }
-
-    .btn-danger {
-      background: var(--destructive);
-      color: white;
-    }
-
-    /* Scrollbar hide */
-    ::-webkit-scrollbar {
-      display: none;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Loading Screen -->
-  <div class="loading-screen" id="loadingScreen">
-    <div class="loading-icon">💰</div>
-    <div class="loading-title">Sibings</div>
-    <div class="loading-subtitle">Loading your savings...</div>
-  </div>
 
-  <!-- Main App -->
-  <div class="app-container">
-    <!-- Savings Tab -->
-    <div class="tab-content active" id="tab-savings">
-      <div class="page-header">
-        <h1 class="page-title">My Savings</h1>
-        <p class="page-subtitle">Track your financial goals</p>
-      </div>
+<!-- Loading -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-wordmark">Sibings</div>
+  <div class="loading-sub">loading your savings</div>
+  <div class="loading-bar-track"><div class="loading-bar-fill"></div></div>
+</div>
 
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-header">
-            <div class="stat-icon green">💵</div>
-            <span class="stat-label">Total Saved</span>
-          </div>
-          <div class="stat-value" id="totalSaved">$0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-header">
-            <div class="stat-icon gray">🎯</div>
-            <span class="stat-label">Goals</span>
-          </div>
-          <div class="stat-value" id="totalGoals">0</div>
-        </div>
-      </div>
+<!-- Confetti -->
+<canvas id="confetti-canvas"></canvas>
 
-      <div class="progress-card">
-        <div class="progress-header">
-          <span class="progress-title">Overall Progress</span>
-          <span class="progress-percent" id="overallPercent">0%</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" id="overallProgress" style="width: 0%"></div>
-        </div>
-        <p class="progress-subtitle" id="overallSubtitle">$0 of $0 saved across all goals</p>
-      </div>
+<!-- App -->
+<div class="app-container">
 
-      <h2 class="section-title">Your Goals</h2>
-      <div id="goalsList"></div>
+  <!-- ── SAVINGS TAB ── -->
+  <div class="tab-content active" id="tab-savings">
+    <div class="page-header">
+      <h1 class="page-title">My Savings</h1>
+      <p class="page-subtitle">track your financial goals</p>
     </div>
 
-    <!-- Progress Tab -->
-    <div class="tab-content" id="tab-progress">
-      <div class="page-header">
-        <h1 class="page-title">Progress</h1>
-        <p class="page-subtitle">Track your savings journey</p>
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total Saved</div>
+        <div class="stat-value" id="totalSaved">₱0</div>
       </div>
+      <div class="stat-card">
+        <div class="stat-label">Active Goals</div>
+        <div class="stat-value" id="totalGoals">0</div>
+      </div>
+    </div>
 
-      <div class="big-stat-card">
+    <!-- Ring dashboard -->
+    <div class="rings-card">
+      <div class="rings-card-label">Overall Progress</div>
+      <div class="rings-header">
+        <span class="rings-saved" id="ringsTotalAmt">₱0</span>
+        <span class="rings-sep">/</span>
+        <span class="rings-target" id="ringsTotalTarget">₱0</span>
+      </div>
+      <div class="rings-figure" id="ringsFigure">
+        <svg id="ringsSvg" aria-label="Goal progress rings"></svg>
+        <div class="rings-center-text">
+          <span class="rings-center-pct" id="ringsTotalPct">0%</span>
+        </div>
+      </div>
+      <div class="rings-legend" id="ringsLegend"></div>
+    </div>
+
+    <div class="section-label">Your Goals</div>
+    <div id="goalsList"></div>
+  </div>
+
+  <!-- ── PROGRESS TAB ── -->
+  <div class="tab-content" id="tab-progress">
+    <div class="page-header">
+      <h1 class="page-title">Progress</h1>
+      <p class="page-subtitle">your savings journey</p>
+    </div>
+
+    <div class="big-stat">
+      <div class="big-stat-label">Net Savings</div>
+      <div class="big-stat-value" id="netSavings">₱0</div>
+      <div class="big-stat-sub">
+        <span class="pos">+<span id="totalDeposits">₱0</span> in</span>
+        <span class="neg">−<span id="totalWithdrawals">₱0</span> out</span>
+      </div>
+    </div>
+
+    <div class="status-grid">
+      <div class="status-card">
+        <div class="status-num" id="completedGoals">0</div>
+        <div class="status-lbl">Completed</div>
+      </div>
+      <div class="status-card">
+        <div class="status-num" id="inProgressGoals">0</div>
+        <div class="status-lbl">Active</div>
+      </div>
+      <div class="status-card">
+        <div class="status-num" id="notStartedGoals">0</div>
+        <div class="status-lbl">Not Started</div>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-top:16px">Breakdown</div>
+    <div class="breakdown-card" id="breakdownList"></div>
+
+    <div class="section-label" style="margin-top:16px">Recent Activity</div>
+    <div class="tx-card" id="transactionList"></div>
+  </div>
+
+  <!-- ── SETTINGS TAB ── -->
+  <div class="tab-content" id="tab-settings">
+    <div class="page-header">
+      <h1 class="page-title">Settings</h1>
+      <p class="page-subtitle">customize your experience</p>
+    </div>
+
+    <div class="settings-info-card">
+      <div class="settings-info-top">
+        <div style="font-size:34px">💰</div>
         <div>
-          <p class="stat-label">Total Net Savings</p>
-          <div class="big-stat-value" id="netSavings">$0</div>
-          <div class="stat-row">
-            <span class="stat-item positive">📈 +<span id="totalDeposits">$0</span></span>
-            <span class="stat-item negative">📉 -<span id="totalWithdrawals">$0</span></span>
-          </div>
-        </div>
-        <div class="big-stat-icon">🐷</div>
-      </div>
-
-      <div class="status-grid">
-        <div class="status-card">
-          <div class="status-icon green">✅</div>
-          <div class="status-value" id="completedGoals">0</div>
-          <div class="status-label">Completed</div>
-        </div>
-        <div class="status-card">
-          <div class="status-icon">⏳</div>
-          <div class="status-value" id="inProgressGoals">0</div>
-          <div class="status-label">In Progress</div>
-        </div>
-        <div class="status-card">
-          <div class="status-icon">🎯</div>
-          <div class="status-value" id="notStartedGoals">0</div>
-          <div class="status-label">Not Started</div>
+          <div class="app-wordmark">Sibings</div>
+          <div class="app-ver">Version 2.0.0</div>
         </div>
       </div>
-
-      <div class="progress-card">
-        <div class="progress-header">
-          <span class="progress-title">Overall Progress</span>
-          <span class="progress-percent" id="progressPercent2">0%</span>
+      <div class="settings-stats">
+        <div class="s-stat">
+          <div class="s-stat-val" id="settingsGoals">0</div>
+          <div class="s-stat-lbl">Goals</div>
         </div>
-        <div class="progress-bar">
-          <div class="progress-fill" id="progressFill2" style="width: 0%"></div>
+        <div class="s-stat">
+          <div class="s-stat-val" id="settingsTransactions">0</div>
+          <div class="s-stat-lbl">Txns</div>
         </div>
-        <p class="progress-subtitle" id="progressSubtitle">You've saved $0 of your $0 goal</p>
+        <div class="s-stat">
+          <div class="s-stat-val" id="settingsSaved">₱0</div>
+          <div class="s-stat-lbl">Saved</div>
+        </div>
       </div>
-
-      <h2 class="section-title">Goals Breakdown</h2>
-      <div class="settings-card" id="breakdownList"></div>
-
-      <h2 class="section-title">Recent Activity</h2>
-      <div class="transaction-list" id="transactionList"></div>
     </div>
 
-    <!-- Settings Tab -->
-    <div class="tab-content" id="tab-settings">
-      <div class="page-header">
-        <h1 class="page-title">Settings</h1>
-        <p class="page-subtitle">Customize your experience</p>
+    <div class="section-label">Data</div>
+    <div class="settings-group">
+      <div class="settings-row" onclick="exportData()">
+        <div class="settings-left">
+          <div class="settings-icon">📥</div>
+          <span class="settings-lbl">Export Data</span>
+        </div>
+        <span class="settings-arrow">›</span>
       </div>
+      <div class="settings-row" onclick="showClearDialog()">
+        <div class="settings-left">
+          <div class="settings-icon">🗑️</div>
+          <span class="settings-lbl" style="color:var(--red)">Clear All Data</span>
+        </div>
+        <span class="settings-arrow">›</span>
+      </div>
+    </div>
 
-      <div class="app-info-card">
-        <div class="app-info-header">
-          <div class="app-logo">💰</div>
-          <div>
-            <div class="app-name">Sibings</div>
-            <div class="app-version">Version 1.0.0</div>
-          </div>
+    <div class="section-label">About</div>
+    <div class="settings-group">
+      <div class="settings-row" onclick="showAbout()">
+        <div class="settings-left">
+          <div class="settings-icon">ℹ️</div>
+          <span class="settings-lbl">About Sibings</span>
         </div>
-        <div class="app-stats">
-          <div class="app-stat">
-            <div class="app-stat-value" id="settingsGoals">0</div>
-            <div class="app-stat-label">Goals</div>
-          </div>
-          <div class="app-stat">
-            <div class="app-stat-value" id="settingsTransactions">0</div>
-            <div class="app-stat-label">Transactions</div>
-          </div>
-          <div class="app-stat">
-            <div class="app-stat-value" id="settingsSaved">$0</div>
-            <div class="app-stat-label">Saved</div>
-          </div>
-        </div>
+        <span class="settings-arrow">›</span>
       </div>
+    </div>
 
-      <div class="section-header">Preferences</div>
-      <div class="settings-card">
-        <div class="settings-item">
-          <div class="settings-item-left">
-            <div class="settings-icon">🌙</div>
-            <span class="settings-label">Dark Mode</span>
-          </div>
-          <span class="settings-value">Always on</span>
-        </div>
-        <div class="settings-item">
-          <div class="settings-item-left">
-            <div class="settings-icon">🔔</div>
-            <span class="settings-label">Notifications</span>
-          </div>
-          <div class="toggle active" id="notifToggle" onclick="toggleSwitch('notifToggle')">
-            <div class="toggle-knob"></div>
-          </div>
-        </div>
-        <div class="settings-item">
-          <div class="settings-item-left">
-            <div class="settings-icon">🔒</div>
-            <span class="settings-label">Biometric Lock</span>
-          </div>
-          <div class="toggle" id="bioToggle" onclick="toggleSwitch('bioToggle')">
-            <div class="toggle-knob"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-header">Data</div>
-      <div class="settings-card">
-        <div class="settings-item" onclick="exportData()">
-          <div class="settings-item-left">
-            <div class="settings-icon">📥</div>
-            <span class="settings-label">Export Data</span>
-          </div>
-          <span class="settings-value">›</span>
-        </div>
-        <div class="settings-item" onclick="showClearDialog()">
-          <div class="settings-item-left">
-            <div class="settings-icon" style="background: rgba(255, 59, 48, 0.2);">🗑️</div>
-            <span class="settings-label" style="color: var(--destructive);">Clear All Data</span>
-          </div>
-          <span class="settings-value">›</span>
-        </div>
-      </div>
-
-      <div class="section-header">About</div>
-      <div class="settings-card">
-        <div class="settings-item" onclick="showAbout()">
-          <div class="settings-item-left">
-            <div class="settings-icon">ℹ️</div>
-            <span class="settings-label">About Sibings</span>
-          </div>
-          <span class="settings-value">›</span>
-        </div>
-        <div class="settings-item">
-          <div class="settings-item-left">
-            <div class="settings-icon">❓</div>
-            <span class="settings-label">Help & Support</span>
-          </div>
-          <span class="settings-value">›</span>
-        </div>
-        <div class="settings-item">
-          <div class="settings-item-left">
-            <div class="settings-icon">⭐</div>
-            <span class="settings-label">Rate App</span>
-          </div>
-          <span class="settings-value">›</span>
-        </div>
-      </div>
-
-      <div class="footer">
-        <p>Made with ❤️ for smart savers</p>
-        <p style="margin-top: 4px;">© 2024 Sibings. All rights reserved.</p>
-      </div>
+    <div style="text-align:center;padding:24px;font-size:11px;color:var(--dim)">
+      made with care for smart savers
     </div>
   </div>
 
-  <!-- Add Goal FAB -->
-  <button class="fab" onclick="openAddModal()">+</button>
+</div><!-- /app-container -->
 
-  <!-- Bottom Navigation -->
-  <nav class="bottom-nav">
-    <div class="nav-items">
-      <button class="nav-item active" onclick="switchTab('savings')">
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.7-1 2-2h2v-4h-2c0-1-.5-1.5-1-2h0V5z"/>
-          <path d="M2 9v1c0 1.1.9 2 2 2h1"/>
-          <path d="M16 11h0"/>
-        </svg>
-        <span class="nav-label">Savings</span>
-      </button>
-      <button class="nav-item" onclick="switchTab('progress')">
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 3v18h18"/>
-          <path d="M18 17V9"/>
-          <path d="M13 17V5"/>
-          <path d="M8 17v-3"/>
-        </svg>
-        <span class="nav-label">Progress</span>
-      </button>
-      <button class="nav-item" onclick="switchTab('settings')">
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
-          <circle cx="12" cy="12" r="3"/>
-        </svg>
-        <span class="nav-label">Settings</span>
-      </button>
+<!-- FAB -->
+<button class="fab" onclick="openAddModal()" aria-label="Add goal">+</button>
+
+<!-- Bottom Nav -->
+<nav class="bottom-nav">
+  <div class="nav-items">
+    <button class="nav-item active" id="nav-savings" onclick="switchTab('savings',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M9 9h1a2 2 0 1 1 0 4h-1"/><path d="M9 9v6"/><path d="M12 15h1"/>
+      </svg>
+      <span class="nav-label">savings</span>
+    </button>
+    <button class="nav-item" id="nav-progress" onclick="switchTab('progress',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>
+      </svg>
+      <span class="nav-label">progress</span>
+    </button>
+    <button class="nav-item" id="nav-settings" onclick="switchTab('settings',this)">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/>
+        <circle cx="12" cy="12" r="3"/>
+      </svg>
+      <span class="nav-label">settings</span>
+    </button>
+  </div>
+</nav>
+
+<!-- ── MODALS ── -->
+
+<!-- Add Goal -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">New Goal</h2>
+      <button class="modal-close" onclick="closeAddModal()">×</button>
     </div>
-  </nav>
-
-  <!-- Add Goal Modal -->
-  <div class="modal-overlay" id="addModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title">New Savings Goal</h2>
-        <button class="modal-close" onclick="closeAddModal()">×</button>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label" for="goalName">Goal Name</label>
+        <input type="text" class="input" id="goalName" placeholder="e.g. New Laptop" autocomplete="off">
       </div>
       <div class="form-group">
-        <label class="form-label">Goal Name</label>
-        <input type="text" class="input" id="goalName" placeholder="e.g., New Car">
+        <label class="form-label" for="goalTarget">Target Amount (₱)</label>
+        <input type="number" class="input" id="goalTarget" placeholder="5000" inputmode="numeric">
       </div>
       <div class="form-group">
-        <label class="form-label">Target Amount</label>
-        <input type="number" class="input" id="goalTarget" placeholder="5000">
+        <label class="form-label" for="goalDeadline">Deadline (optional)</label>
+        <input type="date" class="input" id="goalDeadline">
       </div>
       <div class="form-group">
         <label class="form-label">Icon</label>
@@ -1304,396 +227,77 @@
         <label class="form-label">Color</label>
         <div class="color-grid" id="colorGrid"></div>
       </div>
-      <button class="btn-submit" id="createBtn" onclick="createGoal()">Create Goal</button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-submit" onclick="createGoal()">Create Goal</button>
     </div>
   </div>
+</div>
 
-  <!-- About Modal -->
-  <div class="modal-overlay" id="aboutModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title">About Sibings</h2>
-        <button class="modal-close" onclick="closeAboutModal()">×</button>
-      </div>
-      <div style="text-align: center; padding: 20px 0;">
-        <div style="width: 80px; height: 80px; background: var(--accent); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 16px;">💰</div>
-        <p style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">Sibings</p>
-        <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">Version 1.0.0</p>
-        <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.6;">Sibings is your personal savings companion. Set goals, track progress, and watch your savings grow with our intuitive and beautiful interface.</p>
-      </div>
-      <button class="btn-submit" onclick="closeAboutModal()">Got it</button>
+<!-- Update Goal (deposit / withdraw) -->
+<div class="modal-overlay" id="txModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title" id="txModalTitle">Update</h2>
+      <button class="modal-close" onclick="closeTxModal()">×</button>
     </div>
-  </div>
-
-  <!-- Clear Data Modal -->
-  <div class="modal-overlay" id="clearModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2 class="modal-title">Clear All Data?</h2>
-        <button class="modal-close" onclick="closeClearModal()">×</button>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label" for="txAmount">Amount (₱)</label>
+        <input type="number" class="input" id="txAmount" placeholder="0" inputmode="numeric">
       </div>
-      <div class="confirm-dialog">
-        <p class="confirm-text">This will permanently delete all your goals and transactions. This action cannot be undone.</p>
-        <div class="confirm-buttons">
-          <button class="btn btn-secondary btn-full" onclick="closeClearModal()">Cancel</button>
-          <button class="btn btn-danger btn-full" onclick="clearAllData()">Clear Data</button>
-        </div>
+      <div class="form-group">
+        <label class="form-label" for="txNote">Note (optional)</label>
+        <input type="text" class="input" id="txNote" placeholder="e.g. Weekly allowance" autocomplete="off">
       </div>
     </div>
+    <div class="modal-footer" style="display:flex;gap:10px">
+      <button class="btn btn-primary  btn-full" onclick="doDeposit()">+ Deposit</button>
+      <button class="btn btn-danger   btn-full" onclick="doWithdraw()">− Withdraw</button>
+    </div>
   </div>
+</div>
 
-  <script>
-    // Data
-    const ICONS = ['🎯', '💰', '🏠', '🚗', '✈️', '📱', '💻', '🎮', '👗', '🎓', '🛡️', '🎁', '❤️', '🌴', '⭐'];
-    const COLORS = ['#34c759', '#30d158', '#5856d6', '#ff9500', '#ff3b30', '#af52de', '#5ac8fa', '#ffcc00'];
+<!-- About -->
+<div class="modal-overlay" id="aboutModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">About Sibings</h2>
+      <button class="modal-close" onclick="closeAboutModal()">×</button>
+    </div>
+    <div class="modal-body" style="text-align:center;padding-top:24px;padding-bottom:8px">
+      <div style="font-size:48px;margin-bottom:14px">💰</div>
+      <div class="app-wordmark" style="font-size:30px">Sibings</div>
+      <div style="font-size:11px;color:var(--dim);margin-top:4px;margin-bottom:20px">Version 2.0.0</div>
+      <p style="font-size:13px;color:var(--muted);line-height:1.7">
+        Your personal savings companion.<br>Set goals, track progress, watch your money grow.
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-submit" onclick="closeAboutModal()">Close</button>
+    </div>
+  </div>
+</div>
 
-    let goals = JSON.parse(localStorage.getItem('sibings_goals')) || [
-      { id: '1', name: 'New iPhone', target: 1200, balance: 450, icon: '📱', color: '#34c759', createdAt: Date.now() },
-      { id: '2', name: 'Vacation Fund', target: 3000, balance: 1200, icon: '✈️', color: '#30d158', createdAt: Date.now() - 86400000 },
-      { id: '3', name: 'Emergency Fund', target: 5000, balance: 2100, icon: '🛡️', color: '#5856d6', createdAt: Date.now() - 172800000 }
-    ];
-    let transactions = JSON.parse(localStorage.getItem('sibings_transactions')) || [];
-    let selectedIcon = '🎯';
-    let selectedColor = '#34c759';
+<!-- Clear Data -->
+<div class="modal-overlay" id="clearModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">Clear All Data?</h2>
+      <button class="modal-close" onclick="closeClearModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <p class="confirm-text">
+        This will permanently delete all your goals and transactions. This cannot be undone.
+      </p>
+      <div class="confirm-btns">
+        <button class="btn btn-secondary btn-full" onclick="closeClearModal()">Cancel</button>
+        <button class="btn btn-danger    btn-full" onclick="clearAllData()">Clear Everything</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-    // Utility Functions
-    function formatCurrency(value) {
-      return new Intl.NumberFormat('en-US', {
-        style: 'currency',
-        currency: 'USD',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-      }).format(value);
-    }
-
-    function formatDate(timestamp) {
-      return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(new Date(timestamp));
-    }
-
-    function saveData() {
-      localStorage.setItem('sibings_goals', JSON.stringify(goals));
-      localStorage.setItem('sibings_transactions', JSON.stringify(transactions));
-    }
-
-    function getProgress(goal) {
-      return Math.min(100, Math.round((goal.balance / goal.target) * 100));
-    }
-
-    function getTotalSaved() {
-      return goals.reduce((sum, g) => sum + g.balance, 0);
-    }
-
-    function getTotalTarget() {
-      return goals.reduce((sum, g) => sum + g.target, 0);
-    }
-
-    // Tab Switching
-    function switchTab(tab) {
-      document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      document.getElementById('tab-' + tab).classList.add('active');
-      event.currentTarget.classList.add('active');
-      renderAll();
-    }
-
-    // Render Functions
-    function renderAll() {
-      renderSavingsTab();
-      renderProgressTab();
-      renderSettingsTab();
-    }
-
-    function renderSavingsTab() {
-      const totalSaved = getTotalSaved();
-      const totalTarget = getTotalTarget();
-      const overallProgress = Math.round((totalSaved / totalTarget) * 100) || 0;
-
-      document.getElementById('totalSaved').textContent = formatCurrency(totalSaved);
-      document.getElementById('totalGoals').textContent = goals.length;
-      document.getElementById('overallPercent').textContent = overallProgress + '%';
-      document.getElementById('overallProgress').style.width = overallProgress + '%';
-      document.getElementById('overallSubtitle').textContent = `${formatCurrency(totalSaved)} of ${formatCurrency(totalTarget)} saved across all goals`;
-
-      const goalsList = document.getElementById('goalsList');
-      if (goals.length === 0) {
-        goalsList.innerHTML = `
-          <div class="empty-state">
-            <div class="empty-icon">🎯</div>
-            <p class="empty-title">No savings goals yet</p>
-            <p class="empty-subtitle">Add your first goal to get started</p>
-          </div>
-        `;
-        return;
-      }
-
-      goalsList.innerHTML = goals.map((goal, i) => {
-        const progress = getProgress(goal);
-        const actionFormId = `actionForm-${goal.id}`;
-        return `
-          <div class="goal-card" style="animation: fadeIn 0.3s ease ${i * 0.05}s both;">
-            <div class="goal-header">
-              <div class="goal-icon" style="background: ${goal.color}20;">${goal.icon}</div>
-              <div class="goal-info">
-                <div class="goal-name">${goal.name}</div>
-                <div class="goal-amount"><span class="current">${formatCurrency(goal.balance)}</span> / ${formatCurrency(goal.target)}</div>
-              </div>
-              <div class="goal-badge" style="background: ${goal.color}20; color: ${goal.color};">${progress}%</div>
-            </div>
-            <div class="goal-progress">
-              <div class="goal-progress-bar">
-                <div class="goal-progress-fill" style="width: ${progress}%; background: ${goal.color};"></div>
-              </div>
-            </div>
-            <div class="goal-actions">
-              <button class="btn btn-secondary btn-full" onclick="toggleActionForm('${goal.id}')">📊 Update</button>
-            </div>
-            <div class="action-form" id="${actionFormId}" style="display: none;">
-              <div class="input-group">
-                <input type="number" class="input" id="amount-${goal.id}" placeholder="Enter amount...">
-              </div>
-              <div class="input-row">
-                <button class="btn btn-primary btn-full" onclick="deposit('${goal.id}')">➕ Deposit</button>
-                <button class="btn btn-secondary btn-full" onclick="withdraw('${goal.id}')">➖ Withdraw</button>
-                <button class="btn btn-ghost" onclick="toggleActionForm('${goal.id}')">✕</button>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function renderProgressTab() {
-      const totalDeposits = transactions.filter(t => t.type === 'deposit').reduce((sum, t) => sum + t.amount, 0);
-      const totalWithdrawals = transactions.filter(t => t.type === 'withdraw').reduce((sum, t) => sum + t.amount, 0);
-      const netSavings = totalDeposits - totalWithdrawals;
-      const totalSaved = getTotalSaved();
-      const totalTarget = getTotalTarget();
-      const overallProgress = Math.round((totalSaved / totalTarget) * 100) || 0;
-
-      document.getElementById('netSavings').textContent = formatCurrency(netSavings);
-      document.getElementById('totalDeposits').textContent = formatCurrency(totalDeposits);
-      document.getElementById('totalWithdrawals').textContent = formatCurrency(totalWithdrawals);
-      document.getElementById('completedGoals').textContent = goals.filter(g => g.balance >= g.target).length;
-      document.getElementById('inProgressGoals').textContent = goals.filter(g => g.balance > 0 && g.balance < g.target).length;
-      document.getElementById('notStartedGoals').textContent = goals.filter(g => g.balance === 0).length;
-      document.getElementById('progressPercent2').textContent = overallProgress + '%';
-      document.getElementById('progressFill2').style.width = overallProgress + '%';
-      document.getElementById('progressSubtitle').textContent = `You've saved ${formatCurrency(totalSaved)} of your ${formatCurrency(totalTarget)} goal`;
-
-      // Breakdown
-      const breakdownList = document.getElementById('breakdownList');
-      breakdownList.innerHTML = goals
-        .sort((a, b) => (b.balance / b.target) - (a.balance / a.target))
-        .map(goal => {
-          const progress = getProgress(goal);
-          return `
-            <div class="breakdown-item">
-              <div class="breakdown-header">
-                <div class="breakdown-left">
-                  <span class="breakdown-icon">${goal.icon}</span>
-                  <span class="breakdown-name">${goal.name}</span>
-                </div>
-                <span class="breakdown-amount">${formatCurrency(goal.balance)} / ${formatCurrency(goal.target)}</span>
-              </div>
-              <div class="breakdown-progress">
-                <div class="breakdown-fill" style="width: ${progress}%; background: ${goal.color};"></div>
-              </div>
-              <div class="breakdown-footer">
-                <span>${progress}% complete</span>
-                <span>${formatCurrency(goal.target - goal.balance)} to go</span>
-              </div>
-            </div>
-          `;
-        }).join('');
-
-      // Transactions
-      const transactionList = document.getElementById('transactionList');
-      const recentTransactions = [...transactions].sort((a, b) => b.date - a.date).slice(0, 10);
-      
-      if (recentTransactions.length === 0) {
-        transactionList.innerHTML = `
-          <div class="empty-state" style="padding: 32px;">
-            <div class="empty-icon">📅</div>
-            <p class="empty-title">No transactions yet</p>
-          </div>
-        `;
-      } else {
-        transactionList.innerHTML = recentTransactions.map(t => {
-          const goal = goals.find(g => g.id === t.goalId);
-          return `
-            <div class="transaction-item">
-              <div class="transaction-left">
-                <div class="transaction-icon ${t.type}">${t.type === 'deposit' ? '📈' : '📉'}</div>
-                <div class="transaction-info">
-                  <span class="transaction-type">${t.type}</span>
-                  <span class="transaction-goal">${goal?.name || 'Unknown'}</span>
-                </div>
-              </div>
-              <div class="transaction-right">
-                <span class="transaction-amount ${t.type}">${t.type === 'deposit' ? '+' : '-'}${formatCurrency(t.amount)}</span>
-                <span class="transaction-date">${formatDate(t.date)}</span>
-              </div>
-            </div>
-          `;
-        }).join('');
-      }
-    }
-
-    function renderSettingsTab() {
-      document.getElementById('settingsGoals').textContent = goals.length;
-      document.getElementById('settingsTransactions').textContent = transactions.length;
-      document.getElementById('settingsSaved').textContent = formatCurrency(getTotalSaved());
-    }
-
-    // Actions
-    function toggleActionForm(goalId) {
-      const form = document.getElementById(`actionForm-${goalId}`);
-      form.style.display = form.style.display === 'none' ? 'block' : 'none';
-      if (form.style.display === 'block') {
-        setTimeout(() => document.getElementById(`amount-${goalId}`).focus(), 100);
-      }
-    }
-
-    function deposit(goalId) {
-      const amount = parseFloat(document.getElementById(`amount-${goalId}`).value);
-      if (amount > 0) {
-        const goal = goals.find(g => g.id === goalId);
-        if (goal) {
-          goal.balance += amount;
-          transactions.push({ id: Date.now().toString(), goalId, amount, type: 'deposit', date: Date.now() });
-          saveData();
-          renderAll();
-        }
-      }
-    }
-
-    function withdraw(goalId) {
-      const amount = parseFloat(document.getElementById(`amount-${goalId}`).value);
-      const goal = goals.find(g => g.id === goalId);
-      if (amount > 0 && goal && amount <= goal.balance) {
-        goal.balance -= amount;
-        transactions.push({ id: Date.now().toString(), goalId, amount, type: 'withdraw', date: Date.now() });
-        saveData();
-        renderAll();
-      }
-    }
-
-    // Modal Functions
-    function openAddModal() {
-      document.getElementById('addModal').classList.add('active');
-      renderIconGrid();
-      renderColorGrid();
-      document.getElementById('goalName').focus();
-    }
-
-    function closeAddModal() {
-      document.getElementById('addModal').classList.remove('active');
-      document.getElementById('goalName').value = '';
-      document.getElementById('goalTarget').value = '';
-      selectedIcon = '🎯';
-      selectedColor = '#34c759';
-    }
-
-    function renderIconGrid() {
-      document.getElementById('iconGrid').innerHTML = ICONS.map(icon => `
-        <button class="icon-option ${icon === selectedIcon ? 'selected' : ''}" onclick="selectIcon('${icon}')">${icon}</button>
-      `).join('');
-    }
-
-    function renderColorGrid() {
-      document.getElementById('colorGrid').innerHTML = COLORS.map(color => `
-        <button class="color-option ${color === selectedColor ? 'selected' : ''}" style="background: ${color};" onclick="selectColor('${color}')"></button>
-      `).join('');
-    }
-
-    function selectIcon(icon) {
-      selectedIcon = icon;
-      renderIconGrid();
-    }
-
-    function selectColor(color) {
-      selectedColor = color;
-      renderColorGrid();
-    }
-
-    function createGoal() {
-      const name = document.getElementById('goalName').value.trim();
-      const target = parseFloat(document.getElementById('goalTarget').value);
-      if (name && target > 0) {
-        goals.push({
-          id: Date.now().toString(),
-          name,
-          target,
-          balance: 0,
-          icon: selectedIcon,
-          color: selectedColor,
-          createdAt: Date.now()
-        });
-        saveData();
-        closeAddModal();
-        renderAll();
-      }
-    }
-
-    // Settings Functions
-    function toggleSwitch(id) {
-      document.getElementById(id).classList.toggle('active');
-    }
-
-    function exportData() {
-      const data = { goals, transactions, exportedAt: new Date().toISOString() };
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `sibings-backup-${new Date().toISOString().split('T')[0]}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-
-    function showClearDialog() {
-      document.getElementById('clearModal').classList.add('active');
-    }
-
-    function closeClearModal() {
-      document.getElementById('clearModal').classList.remove('active');
-    }
-
-    function clearAllData() {
-      localStorage.removeItem('sibings_goals');
-      localStorage.removeItem('sibings_transactions');
-      goals = [];
-      transactions = [];
-      renderAll();
-      closeClearModal();
-    }
-
-    function showAbout() {
-      document.getElementById('aboutModal').classList.add('active');
-    }
-
-    function closeAboutModal() {
-      document.getElementById('aboutModal').classList.remove('active');
-    }
-
-    // Close modals on overlay click
-    document.querySelectorAll('.modal-overlay').forEach(modal => {
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          modal.classList.remove('active');
-        }
-      });
-    });
-
-    // Initialize
-    window.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        document.getElementById('loadingScreen').classList.add('hidden');
-        renderAll();
-      }, 800);
-    });
-  </script>
+<script src="app.js" defer></script>
 </body>
 </html>
